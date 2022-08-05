@@ -17,7 +17,7 @@ entity full_radio_v1_0 is
 	port (
 		-- Users to add ports here
         m_axis_tvalid : out std_logic;
-        m_axis_tdata : out std_logic_vector(15 downto 0);
+        m_axis_tdata : out std_logic_vector(31 downto 0);
 		-- User ports ends
 		-- Do not modify the ports beyond this line
 
@@ -57,7 +57,7 @@ architecture arch_imp of full_radio_v1_0 is
 		);
 		port (
 		m_axis_tvalid : out std_logic;
-		m_axis_tdata : out std_logic_Vector(15 downto 0);
+		m_axis_tdata : out std_logic_Vector(31 downto 0);
 		S_AXI_ACLK	: in std_logic;
 		S_AXI_ARESETN	: in std_logic;
 		S_AXI_AWADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
