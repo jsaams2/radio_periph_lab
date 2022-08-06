@@ -220,7 +220,7 @@ proc create_root_design { parentCell } {
   # Create instance: lowlevel_dac_intfc_0, and set properties
   set lowlevel_dac_intfc_0 [ create_bd_cell -type ip -vlnv jhuapl.edu:user:lowlevel_dac_intfc:1.1 lowlevel_dac_intfc_0 ]
   set_property -dict [ list \
-   CONFIG.channels {1} \
+   CONFIG.channels {2} \
  ] $lowlevel_dac_intfc_0
 
   # Create instance: processing_system7_0, and set properties

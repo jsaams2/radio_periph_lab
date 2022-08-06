@@ -366,7 +366,7 @@ begin
 	      when b"01" =>
 	        reg_data_out <= slv_reg1;
 	      when b"10" =>
-	        reg_data_out <= x"DEADBEEF";
+	        reg_data_out <= slv_reg2;
 	      when b"11" =>
 	        reg_data_out <= slv_reg3;
 	      when others =>
@@ -407,7 +407,7 @@ end process;
 radio_tuner : tuner_core 
     port map (
         clk125 => s_axi_aclk,
-        reset => (not S_AXI_ARESETN),
+        reset => (not S_AXI_ARESETN) or (slv_reg2(0)),
         tuner_pinc =>slv_reg1,
         fake_adc_pinc =>slv_reg0,
         m_axis_data_tdata => m_axis_tdata,
