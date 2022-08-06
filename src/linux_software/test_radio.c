@@ -61,8 +61,8 @@ void print_benchmark(volatile unsigned int *periph_base)
     float throughput=0;
     // please insert your code here for calculate the actual throughput in Mbytes/second
     // how much data was transferred? How long did it take?
-  
-    printf("Estimated Transfer throughput = %f Mbytes/sec",throughput);
+    throughput = (2048*4) / ((float)(stop_time - start_time) / 125e6) / 1e6;
+    printf("Estimated Transfer throughput = %f Mbytes/sec\n",throughput);
 }
 
 int main()
@@ -71,7 +71,7 @@ int main()
 // first, get a pointer to the peripheral base address using /dev/mem and the function mmap
     volatile unsigned int *my_periph = get_a_pointer(RADIO_PERIPH_ADDRESS);	
 
-    printf("\r\n\r\n\r\nLab 6 YOURNAME - Custom Peripheral Demonstration\n\r");
+    printf("\r\n\r\n\r\nLab 6 James Saams - Custom Peripheral Demonstration\n\r");
     printf("Tuning Radio to 30MHz\n\r");
     radioTuner_tuneRadio(my_periph,30e6);
     printf("Playing Tune at near 30MHz\r\n");

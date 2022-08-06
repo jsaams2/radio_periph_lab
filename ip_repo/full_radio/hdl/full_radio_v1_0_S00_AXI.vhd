@@ -229,7 +229,6 @@ begin
 	      slv_reg0 <= (others => '0');
 	      slv_reg1 <= (others => '0');
 	      slv_reg2 <= (others => '0');
-	      slv_reg3 <= (others => '0');
 	    else
 	      loc_addr := axi_awaddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
 	      if (slv_reg_wren = '1') then
@@ -263,14 +262,12 @@ begin
 	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	                -- Respective byte enables are asserted as per write strobes                   
 	                -- slave registor 3
-	                -- slv_reg3(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8); IGNORE WRITES TO COUNTER
 	              end if;
 	            end loop;
 	          when others =>
 	            slv_reg0 <= slv_reg0;
 	            slv_reg1 <= slv_reg1;
 	            slv_reg2 <= slv_reg2;
-	            slv_reg3 <= std_logic_vector(unsigned(slv_reg3) + 1);
 	        end case;
 	      end if;
 	    end if;
@@ -369,7 +366,7 @@ begin
 	      when b"01" =>
 	        reg_data_out <= slv_reg1;
 	      when b"10" =>
-	        reg_data_out <= slv_reg2;
+	        reg_data_out <= x"DEADBEEF";
 	      when b"11" =>
 	        reg_data_out <= slv_reg3;
 	      when others =>
@@ -397,11 +394,20 @@ begin
 
 
 	-- Add user logic here
-
+process (S_AXI_ACLK) is
+begin
+    if(rising_edge (S_AXI_ACLK)) then
+        if (S_AXI_ARESETN = '0') then
+            slv_reg3 <= (others => '0');
+        else
+            slv_reg3 <= std_logic_vector(unsigned(slv_reg3) + 1);
+        end if;
+    end if;
+end process;
 radio_tuner : tuner_core 
     port map (
         clk125 => s_axi_aclk,
-        reset => slv_reg2(0),
+        reset => (not S_AXI_ARESETN),
         tuner_pinc =>slv_reg1,
         fake_adc_pinc =>slv_reg0,
         m_axis_data_tdata => m_axis_tdata,
