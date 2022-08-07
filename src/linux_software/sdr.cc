@@ -21,8 +21,9 @@
 #define RADIO_TUNER_TIMER_REG_OFFSET 3
 #define RADIO_PERIPH_ADDRESS 0x43c00000
 
-#define STREAM_VALID_OFFSET 0
-#define STREAM_DATA_OFFSET 3
+#define STREAM_VALID_OFFSET 4
+#define STREAM_DATA_OFFSET 5
+#define STREAM_RESET_OFFSET 6
 #define RADIO_STREAM_ADDRESS 0x43c00000
 
 using namespace std;
@@ -208,12 +209,18 @@ int radio_udp_bcaster(string ip_addr, string port) {
     vector<uint8_t> packet;
     vector<uint32_t> data_vec;
     data_vec.resize(256);
+    *(my_periph + STREAM_RESET_OFFSET) = 0x00000001;
+    bool enabled = false;
     while (_g_running) {
         while (_g_stream_en && _g_running){
+            if(!enabled) {
+                *(my_periph + STREAM_RESET_OFFSET) = 0x00000000;
+                enabled = true;
+            }
             //copy out and broacast data
             size_t samples = 0;
             while (samples < 256 && _g_running && _g_stream_en) {
-                uint32_t valid = 1;//my_periph[STREAM_VALID_OFFSET];
+                uint32_t valid = *(my_periph + STREAM_VALID_OFFSET);
                 if (valid) {
                     data_vec[samples] = *(my_periph + STREAM_DATA_OFFSET);
                     samples++;
@@ -229,7 +236,12 @@ int radio_udp_bcaster(string ip_addr, string port) {
 
         }
         //don't hog the CPU busy waiting
+        if (!_g_stream_en) {
+            *(my_periph + STREAM_RESET_OFFSET) = 0x00000001;
+            enabled = false;
+        }
         usleep(200 * 1000);
+        
     }
     return 0;
 }
