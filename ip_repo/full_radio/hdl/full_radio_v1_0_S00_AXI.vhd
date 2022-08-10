@@ -128,6 +128,7 @@ architecture arch_imp of full_radio_v1_0_S00_AXI is
 	
 	signal fifo_axis_tdata : std_logic_vector(m_axis_tdata'high downto 0);
     signal fifo_axis_tready : std_logic;
+    signal fifo_ready_hold : std_logic;
     signal fifo_axis_tvalid : std_logic;
 component tuner_core
     Port (
@@ -459,13 +460,12 @@ process (S_AXI_ACLK) is
                 slv_reg3 <= std_logic_vector(unsigned(slv_reg3) + 1);
             end if;
             
-            if (fifo_axis_tready = '1' and fifo_ready = '1') then
-                fifo_axis_tready <= '0';
-            elsif (fifo_axis_tready = '0' and fifo_ready = '1') then
+            if (fifo_ready = '1' and fifo_ready_hold = '0') then
                 fifo_axis_tready <= '1';
-            else
+            else 
                 fifo_axis_tready <= '0';
             end if;
+            fifo_ready_hold <= fifo_ready;
         end if;
     end process;
 

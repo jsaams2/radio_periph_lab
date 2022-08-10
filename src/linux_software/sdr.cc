@@ -233,7 +233,7 @@ int radio_udp_bcaster(string ip_addr, string port) {
             memcpy(p_packet, (char*)data_vec.data(), data_vec.size() * sizeof(uint32_t));
 
             sendto(bcast, (const char *) packet.data(), packet.size(), MSG_CONFIRM, (const struct sockaddr*) &bcast_sock, sizeof(bcast_sock));
-
+            frame_count++;
         }
         //don't hog the CPU busy waiting
         if (!_g_stream_en) {
